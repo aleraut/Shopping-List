@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, View, Button, FlatList, Alert } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Alert } from 'react-native';
 import { db } from './dbconfig';
+import { Header, Input, Button, Icon, ListItem } from '@rneui/themed';
 
 export default function App() {
   const [amount, setAmount] = useState('');
@@ -57,34 +58,53 @@ export default function App() {
     );
   };
 
-  const clearList = () => {
+  /*const clearList = () => {
     setTodos([]);
-  };
+  }; */
 
   return (
     <View style={styles.container}>
-      <TextInput 
+      <Header 
+        centerComponent={{ text: 'MY PRODUCTS', style:{ fontSize: 16, color: 'white' }}}
+      />
+      <Input 
         placeholder='Product'
         value={product}
         onChangeText={product => setProduct(product)}
-        style={{ marginTop: 30, width: 200, borderColor: 'gray', borderWidth: 1,}}
       />
-      <TextInput 
+      <Input 
         placeholder='Amount'
         value={amount}
         onChangeText={amount => setAmount(amount)}
-        style={{ marginTop: 5 ,marginBottom: 5, fontSize: 18, width: 200, borderColor: 'gray', borderWidth: 1,}}
       />
-      <Button title='Save' onPress={saveItem} />
-      <Text style={{ fontSize: 20, color: 'blue', marginTop: 30 }}>Shopping List</Text>
+      <Button onPress={saveItem}>
+        SAVE
+        <Icon name="check" color="white" style={{marginLeft: 10}} />
+      </Button>
       <FlatList 
-        style={{marginLeft: "5%"}}
+        style={{marginLeft: "2%"}}
         keyExtractor={item => item.id.toString()}
         renderItem={({item}) =>
-        <View style={styles.listcontainer}>
-          <Text style={{fontSize: 18}}>{item.product}, {item.amount}</Text>
-          <Text style={{fontSize: 18, color: '#0000ff'}} onPress={() => deleteItem(item.id)}>Done</Text>
-        </View>}
+          <ListItem.Swipeable
+            rightContent={(action) => (
+              <Button
+                containerStyle={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  backgroundColor: '#f4f4f4',
+                }}
+                type="clear"
+                icon={{ name: 'delete-outline' }}
+                onPress={() => deleteItem(item.id)}
+              />
+            )}
+          >
+            <ListItem.Content>
+              <ListItem.Title>{item.product}</ListItem.Title>
+              <ListItem.Subtitle>{item.amount}</ListItem.Subtitle>
+            </ListItem.Content>
+          </ListItem.Swipeable>
+        }
         data={items}
         ItemSeparatorComponent={listSeparator}
       />
@@ -94,11 +114,9 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
+    marginTop: 20,
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
    },
    listcontainer: {
     flexDirection: 'row',
